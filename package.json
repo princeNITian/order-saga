@@ -1,0 +1,36 @@
+{
+  "name": "order-saga",
+  "version": "1.0.0",
+  "description": "A production-inspired serverless backend demonstrating the **Saga Orchestration Pattern** using **AWS Step Functions**.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/princeNITian/order-saga.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/princeNITian/order-saga/issues"
+  },
+  "homepage": "https://github.com/princeNITian/order-saga#readme",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1090.0",
+    "@aws-sdk/lib-dynamodb": "^3.1090.0",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.162",
+    "@types/node": "^26.1.1",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^10.7.0",
+    "prettier": "^3.9.5",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
+  }
+}

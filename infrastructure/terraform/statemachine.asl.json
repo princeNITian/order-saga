@@ -1,29 +1,114 @@
 {
   "Comment": "Order Processing Saga",
+
   "StartAt": "CreateOrder",
+
   "States": {
+
     "CreateOrder": {
       "Type": "Task",
       "Resource": "${create_order_lambda_arn}",
-      "Next": "ReserveInventory"
+      "ResultPath": "$.order",
+      "Next": "ReserveInventory",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "OrderFailed"
+        }
+      ]
     },
 
     "ReserveInventory": {
       "Type": "Task",
       "Resource": "${reserve_inventory_lambda_arn}",
-      "Next": "ProcessPayment"
+      "Parameters": {
+        "orderId.$": "$.order.orderId",
+        "productId.$": "$.productId",
+        "quantity.$": "$.quantity"
+      },
+      "ResultPath": "$.inventory",
+      "Next": "ProcessPayment",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "CancelOrder"
+        }
+      ]
     },
 
     "ProcessPayment": {
       "Type": "Task",
       "Resource": "${process_payment_lambda_arn}",
-      "Next": "CreateShipment"
+      "Parameters": {
+        "orderId.$": "$.order.orderId",
+        "amount.$": "$.amount"
+      },
+      "ResultPath": "$.payment",
+      "Next": "CreateShipment",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "ReleaseInventory"
+        }
+      ]
     },
 
     "CreateShipment": {
       "Type": "Task",
       "Resource": "${create_shipment_lambda_arn}",
-      "End": true
+      "Parameters": {
+        "orderId.$": "$.order.orderId"
+      },
+      "ResultPath": "$.shipment",
+      "Next": "OrderSucceeded",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "RefundPayment"
+        }
+      ]
+    },
+
+    "RefundPayment": {
+      "Type": "Task",
+      "Resource": "${refund_payment_lambda_arn}",
+      "Parameters": {
+        "paymentId.$": "$.payment.paymentId"
+      },
+      "ResultPath": "$.refund",
+      "Next": "ReleaseInventory"
+    },
+
+    "ReleaseInventory": {
+      "Type": "Task",
+      "Resource": "${release_inventory_lambda_arn}",
+      "Parameters": {
+        "orderId.$": "$.order.orderId",
+        "productId.$": "$.productId",
+        "quantity.$": "$.quantity"
+      },
+      "ResultPath": "$.releaseInventory",
+      "Next": "CancelOrder"
+    },
+
+    "CancelOrder": {
+      "Type": "Task",
+      "Resource": "${cancel_order_lambda_arn}",
+      "Parameters": {
+        "orderId.$": "$.order.orderId"
+      },
+      "ResultPath": "$.cancelOrder",
+      "Next": "OrderFailed"
+    },
+
+    "OrderSucceeded": {
+      "Type": "Succeed"
+    },
+
+    "OrderFailed": {
+      "Type": "Fail",
+      "Cause": "Order Processing Failed"
     }
+
   }
 }

@@ -1,21 +1,32 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { APIGatewayProxyEvent } from "aws-lambda";
 
-import { success, failure } from "../../shared/response.js";
 import { Logger } from "../../shared/logger.js";
+import { success, failure } from "../../shared/response.js";
 import { CreateOrderService } from "./service.js";
 
-export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayProxyEvent | any) => {
   try {
-    const body = JSON.parse(event.body ?? "{}");
+    // API Gateway
+    if ("body" in event) {
+      const body = JSON.parse(event.body ?? "{}");
 
-    const order = await CreateOrderService.create(body);
+      const order = await CreateOrderService.create(body);
 
-    return success(order, 201);
+      return success(order, 201);
+    }
+
+    // Step Functions
+    return await CreateOrderService.create(event);
+
   } catch (error) {
     Logger.error("Create Order Failed", error);
 
-    return failure("Unable to create order");
+    // API Gateway
+    if ("body" in event) {
+      return failure("Unable to create order");
+    }
+
+    // Step Functions
+    throw error;
   }
 };

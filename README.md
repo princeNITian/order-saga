@@ -364,3 +364,11 @@ After completing this project you will understand
 - Event Driven Architecture
 - Production Error Handling
 - Cloud Monitoring
+
+# Images of Execution:
+
+### Happy Path
+![Happy Path](./images/happy-path.png)
+
+### Payment Failure
+![Payment Failure](./images/payment-failed.png)

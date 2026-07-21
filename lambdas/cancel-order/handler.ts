@@ -1,19 +1,12 @@
 import { CancelOrderService } from "./service.js";
-import { success, failure } from "../../shared/response.js";
+import { Logger } from "../../shared/logger.js";
 
 export const handler = async (event: any) => {
   try {
+    return await CancelOrderService.cancel(event.orderId);
+  } catch (error) {
+    Logger.error("Cancel Order Failed", error);
 
-    const result =
-      await CancelOrderService.cancel(
-        event.orderId
-      );
-
-    return success(result);
-
-  } catch {
-
-    return failure("Cancel Order Failed");
-
+    throw error;
   }
 };

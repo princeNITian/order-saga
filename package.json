@@ -9,7 +9,9 @@
     "build": "tsc",
     "bundle": "node scripts/build.mjs",
     "zip": "node scripts/zip.mjs",
-    "package": "npm run bundle && npm run zip"
+    "package": "npm run bundle && npm run zip",
+    "deploy": "node scripts/deploy.mjs",
+    "release": "npm run package && npm run deploy"
   },
   "repository": {
     "type": "git",

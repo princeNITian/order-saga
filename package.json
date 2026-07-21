@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx",
-    "build": "tsc"
+    "build": "tsc",
+    "bundle": "node scripts/build.mjs",
+    "zip": "node scripts/zip.mjs",
+    "package": "npm run bundle && npm run zip"
   },
   "repository": {
     "type": "git",
@@ -28,6 +31,7 @@
     "@types/aws-lambda": "^8.10.162",
     "@types/node": "^26.1.1",
     "@types/uuid": "^10.0.0",
+    "esbuild": "^0.28.1",
     "eslint": "^10.7.0",
     "prettier": "^3.9.5",
     "tsx": "^4.23.1",

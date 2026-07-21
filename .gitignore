@@ -1,2 +1,5 @@
 node_modules/
 build/
+.terraform/
+terraform.tfstate.backup
+.terraform.lock.hcl

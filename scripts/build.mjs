@@ -1,31 +1,55 @@
 import { build } from "esbuild";
-import { readdirSync } from "node:fs";
+import { readdirSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const lambdaRoot = "lambdas";
+const outputRoot = "build";
 
-const lambdaFolders = readdirSync(lambdaRoot, {
+// Clean previous build
+rmSync(outputRoot, {
+  recursive: true,
+  force: true,
+});
+
+// Discover all Lambda directories
+const lambdas = readdirSync(lambdaRoot, {
   withFileTypes: true,
 })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
 
-for (const lambda of lambdaFolders) {
-  console.log(`Building ${lambda}...`);
+for (const lambda of lambdas) {
+  const outDir = join(outputRoot, lambda);
+
+  mkdirSync(outDir, {
+    recursive: true,
+  });
+
+  console.log(`\nBuilding ${lambda}...`);
 
   await build({
     entryPoints: [join(lambdaRoot, lambda, "handler.ts")],
-    outfile: join("build", lambda, "handler.js"),
+
+    outfile: join(outDir, "handler.js"),
+
     bundle: true,
+
     platform: "node",
+
     target: "node22",
-    format: "esm",
-    sourcemap: true,
+
+    format: "cjs",
+
+    treeShaking: true,
+
+    sourcemap: false,
+
     minify: false,
-    packages: "external",
+
+    legalComments: "none",
   });
 
-  console.log(`✓ ${lambda} built`);
+  console.log(`✓ ${lambda} built successfully.`);
 }
 
-console.log("\nAll Lambdas built successfully.");
+console.log("\n🎉 All Lambdas built successfully.");

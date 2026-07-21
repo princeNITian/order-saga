@@ -1,8 +1,8 @@
 export const TABLES = {
-  ORDERS: "Orders",
-  INVENTORY: "Inventory",
-  PAYMENTS: "Payments",
-  SHIPMENTS: "Shipments",
+  ORDERS: process.env.ORDERS_TABLE || "Orders",
+  INVENTORY: process.env.INVENTORY_TABLE || "Inventory",
+  PAYMENTS: process.env.PAYMENTS_TABLE ||"Payments",
+  SHIPMENTS: process.env.SHIPMENTS_TABLE ||"Shipments",
 };
 
 export const ORDER_STATUS = {

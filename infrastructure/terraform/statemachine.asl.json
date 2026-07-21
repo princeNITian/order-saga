@@ -1,0 +1,29 @@
+{
+  "Comment": "Order Processing Saga",
+  "StartAt": "CreateOrder",
+  "States": {
+    "CreateOrder": {
+      "Type": "Task",
+      "Resource": "${create_order_lambda_arn}",
+      "Next": "ReserveInventory"
+    },
+
+    "ReserveInventory": {
+      "Type": "Task",
+      "Resource": "${reserve_inventory_lambda_arn}",
+      "Next": "ProcessPayment"
+    },
+
+    "ProcessPayment": {
+      "Type": "Task",
+      "Resource": "${process_payment_lambda_arn}",
+      "Next": "CreateShipment"
+    },
+
+    "CreateShipment": {
+      "Type": "Task",
+      "Resource": "${create_shipment_lambda_arn}",
+      "End": true
+    }
+  }
+}
